@@ -1,11 +1,11 @@
-import json
+import json, bcrypt, jwt
 import re
-import bcrypt
 
 from django.views   import View
 from django.http    import JsonResponse
 
-from .models    import Users
+from .models      import Users
+from my_settings import SECRET, ALGORITHM
 
 class SignupView(View):
     def post(self, request):
@@ -26,7 +26,7 @@ class SignupView(View):
                 return JsonResponse({"message":"INVALID_PASSWORD"}, status=400)
             
             else:
-                Users.objects.create(
+                user_signup = Users(
                     email = data['email'],
                     password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
                 ).save()
@@ -35,4 +35,26 @@ class SignupView(View):
 
         except KeyError as e:
             return JsonResponse({"message":"KEY_ERROR =>" + e.args[0]}, status=400)
-    
+
+
+class SigninView(View):
+    def get(self, request):
+        data = json.loads(request.body)
+
+        try:
+             
+            if Users.objects.filter(email=data['email']).exists():
+                user = Users.objects.get(email=data['email'])
+
+                if bcrypt.checkpw(data['password'].encode('utf-8'), user.password.encode('utf-8')):
+                    access_token = jwt.encode({'id':user.email}, SECRET, ALGORITHM)
+
+                    return JsonResponse({"message":"SUCCESS", "ACCESS_TOKEN":access_token}, status=201)
+
+                return JsonResponse({"message":"INVALID_User"}, status=401)
+
+            else:
+                return JsonResponse({"message":"INVALID_User"}, status=401)
+
+        except KeyError as e:
+            return JsonResponse({"message":"KEY_ERROR =>" + e.args[0]}, status=400)
