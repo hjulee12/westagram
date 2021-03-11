@@ -7,4 +7,4 @@ class Users(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'Users'
+        db_table = 'users'
