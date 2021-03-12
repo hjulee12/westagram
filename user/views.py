@@ -4,7 +4,7 @@ import re
 from django.views   import View
 from django.http    import JsonResponse
 
-from .models      import Users
+from .models      import User
 from my_settings  import SECRET, ALGORITHM
 
 class SignupView(View):
@@ -16,7 +16,7 @@ class SignupView(View):
 
         try:
 
-            if Users.objects.filter(email=data['email']).exists():
+            if User.objects.filter(email=data['email']).exists():
                 return JsonResponse({"message":"USER_EXIST"}, status=400)
                 
             if not re.match(REGEX_email, (data['email'])):
@@ -27,7 +27,7 @@ class SignupView(View):
             
             else:
                 # bcrypt.hashpw() 메소드 이용해 암호화
-                user_signup = Users(
+                user_signup = User(
                     email = data['email'],
                     password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
                 ).save()
@@ -44,7 +44,7 @@ class SigninView(View):
 
         try:
              
-            if Users.objects.filter(email=data['email']).exists():
+            if User.objects.filter(email=data['email']).exists():
                 user = Users.objects.get(email=data['email'])
 
                 # bcrypt.checkpw() 메소드 이용해 비밀번호 확인(입력받은 pw, 저장된 암호화된 pw): 데이터타입은 Bytes
