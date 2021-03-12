@@ -15,12 +15,14 @@ class PostingView(View):
 
         user_id    = user.id
         image_url  = data['image_url']
+        contents   = data['contents']
 
         try:
 
             Post.objects.create(
                 user_id     = user_id,   
-                image_url   = image_url
+                image_url   = image_url,
+                contents    = contents
             )
 
             return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)
