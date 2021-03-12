@@ -12,4 +12,5 @@ DATABASES = {
     }
    }
 
-SECRET = 'or00_7zyhvbi*59s80e9e$%4izi)2g1&^$vxa=pg+duq^x=_8#'
+SECRET    = 'or00_7zyhvbi*59s80e9e$%4izi)2g1&^$vxa=pg+duq^x=_8#'
+ALGORITHM = 'HS256'
