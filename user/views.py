@@ -5,7 +5,7 @@ import bcrypt
 from django.views   import View
 from django.http    import JsonResponse
 
-from .models    import Users
+from .models    import User
 
 class SignupView(View):
     def post(self, request):
@@ -16,7 +16,7 @@ class SignupView(View):
 
         try:
 
-            if Users.objects.filter(email=data['email']).exists():
+            if User.objects.filter(email=data['email']).exists():
                 return JsonResponse({"message":"USER_EXIST"}, status=400)
                 
             if not re.match(REGEX_email, (data['email'])):
@@ -26,7 +26,7 @@ class SignupView(View):
                 return JsonResponse({"message":"INVALID_PASSWORD"}, status=400)
             
             else:
-                Users.objects.create(
+                User.objects.create(
                     email = data['email'],
                     password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
                 )

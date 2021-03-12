@@ -3,20 +3,24 @@ import json
 from django.views import View
 from django.http  import JsonResponse
 
-from .models     import Posts
-from user.models import Users
+from .models     import Post
+from user.models import User
 
 class PostingView(View):
 # @login_decorator
     def post(self, request):
         data = json.loads(request.body)
+        
+        user        = User.objects.get(email=data['email'])
+
+        user_id     = user.id
+        image_urls  = data['image_urls']
 
         try:
-            user = Users.objects.get(id=user.id)
-            print(user)
-            Posts.objects.create(
-                user_id     = user.id,  # request.user will give you a User object representing the currently logged-in user.
-                image_urls  = data['image_urls'],
+
+            Post.objects.create(
+                user_id     = user_id,   
+                image_urls  = image_urls
             )
 
             return JsonResponse({'MESSAGE':'SUCCESS'}, status=200)
